@@ -6,8 +6,6 @@ import logging
 import glob
 import time
 import shutil
-from termcolor import colored
-from lxml import etree
 
 logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -23,11 +21,10 @@ old_names = []
 new_names = []
 d_old = {}
 d_new = {}
-
+changes = {}
 	
 def fix(file):
 	global old_names, new_names
-	
 	
 	#logger.info("Fixing file: "+file)
 	with open(file, 'r') as f:
@@ -69,6 +66,16 @@ def fix(file):
 					print("Not changed")
 				o.write(line)
 
+
+def logInfos():
+	logger.info("Old names foud : ")
+	logger.info(old_names)
+	logger.info("New names foud : ")
+	logger.info(new_names)
+	print(d_old)
+	print(d_new)
+
+
 def main():
 	global old_names, new_names
 	if not os.path.isfile(args.old):
@@ -89,11 +96,6 @@ def main():
 		lines = n.readlines()
 		for line in lines:
 			new_names.append(line.strip('\n'))
-			
-	logger.info("Old names foud : ")
-	logger.info(old_names)
-	logger.info("New names foud : ")
-	logger.info(new_names)
 	
 	cpt = 0
 	for el in old_names:
@@ -103,11 +105,19 @@ def main():
 	for el in new_names:
 		d_new[el] = cpt
 		cpt += 1
-	print(d_old)
-	print(d_new)
-	
-	for file in glob.glob(args.input+"/*.txt"):
-		fix(file)
+
+	st = [f"[{d_new[label]}]{label}" for label in d_new]
+	st = ' '.join(st)
+
+	for el in d_old:
+		ans = -1
+		while not int(ans) in list(d_new.values()):
+			ask = f"Change \'{el}\' to which ID ?"
+			ans = input(f"{ask}\n{st} : ")
+		print("ok")
+
+	# for file in glob.glob(args.input+"/*.txt"):
+	# 	fix(file)
 
 if __name__ == '__main__':
 	main()
