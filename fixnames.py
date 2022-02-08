@@ -18,19 +18,21 @@ new_names = []
 d_old = {}
 d_new = {}
 changes = {}
+
+if 'nt' in os.name:
+	sep = '\\'
+else:
+	print("UNIX")
+	sep = '/'
 	
 def fix(file):
-	global old_names, new_names
+	global old_names, new_names, sep
 
 	with open(file, 'r') as f:
 		lines = f.readlines()
-		if 'nt' in os.name:
-			sep = '\\'
-		else:
-			sep = '/'
 		filename = file.split(sep)[-1]
 		output = args.Output + sep + filename
-		print(filename, output)
+		#print(filename)
 		with open(output, "w+") as o:
 			for line in lines:
 				splitted = line.split()
